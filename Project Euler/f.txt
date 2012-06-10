@@ -1,0 +1,452 @@
+26、
+#encoding=utf-8
+'''
+而怎么计算一个数的循环长度呢
+只需要知道它能被多少长度的9整除就行了
+3能被9整除，所以它的循环长度是1
+7能被999999整除，商正好是循环体142857，所以它的循环长度是6
+'''
+from euler import is_prime
+
+n = 997
+for p in range(n, 1, -2):
+	if not is_prime(p):
+		continue
+	c = 1
+	while (pow(10, c) - 1) % p != 0:
+		c += 1
+	if p-c == 1:
+		break
+print p
+
+27、
+#encoding=utf-8
+from euler import is_prime
+
+def get_primes_num(a, b):
+	n = 0
+	while 1:
+		value = n*n + a*n +b
+		if value <= 0:
+			break
+		if not is_prime(value):
+			break
+		n += 1
+	return n
+
+#print get_primes_num(-79, 1601)
+'''
+b一定是正素数
+因为当n为0时，表达式的值为b
+'''
+primes_b = []
+for i in range(3, 1000):
+	if is_prime(i):
+		primes_b.append(i)
+
+solution = ()
+snum = 0
+for a in range(-999, 1000):
+	for b in primes_b:
+		gpnum = get_primes_num(a, b)
+		if gpnum > snum:
+			solution = (a, b)
+			snum = gpnum
+			print solution, gpnum, solution[0] * solution[1]			
+
+28、
+#encoding=utf-8
+
+numbers_sum = 1
+corder_sum = 1
+circle_num = (1001 + 1) / 2   #2n-1等于边长，n为圈数
+for circle in range(2, circle_num+1):
+	numbers_sum = (2 * (circle-1) - 1)**2 
+	first_num = numbers_sum + 1 #这一圈的第一个数
+	step = 2*circle - 2  #边长-1 
+	first_corder = first_num + step - 1
+	corder_sum += first_corder*4 + step*6
+
+print corder_sum
+
+29、
+result = set()
+for a in range(2, 101):
+	for b in range(2, 101):
+		result.add(a**b)
+
+print len(result)
+
+30、
+resultsum = [] 
+
+for num in range(2, 9**5*7):
+	tmpsum = 0
+	for i in str(num):
+		tmpsum += int(i)**5
+	if tmpsum == num:
+		resultsum.append(tmpsum)
+print resultsum
+print sum(resultsum)
+
+31、
+#encodin=utf-8
+target = 200
+coins = [1,2,5,10,20,50,100,200]
+ways = [1]+[0]*target
+'''
+动态归划问题
+'''
+for coin in coins:
+   for i in range(coin, target+1):
+       ways[i] += ways[i-coin]
+print ways[target]
+
+32、
+pandigitals = set()
+for multiplicard in range(1, 5001):
+	for multiplier in range(1, 101):
+		product = multiplicard * multiplier
+		ss = str(product)+str(multiplicard)+str(multiplier)
+		ss = ''.join(sorted(ss))
+		if ss == '123456789':
+			print product
+			pandigitals.add(product)
+	
+print sum(pandigitals)
+
+33、
+d = 1
+for i in range(1, 10):
+  for j in range(1, i):
+    for k in range(1, j):
+      ki = k*10 + i
+      ij = float(i)*10 + j
+      if (k*ij == ki*j):
+        d *= ij/ki
+print d 
+
+34、
+fact = (1,1,2,6,24,120,720,5040,40320,362880)
+s = 0
+
+for n in range(10, 50000):
+	x = sum( fact[int(d)] for d in str(n) )
+	if n == x:
+		s += n 
+print s
+
+35、
+import math
+total=1
+
+def prime(n):
+    if(n==2):
+        return True
+    if(not n%2):
+        return False
+    else:
+        for i in range(3,int(math.sqrt(n))+1,2):
+            if(not n%i):
+                return False
+    return True
+    
+def rotate(l):
+    l.insert(0,l.pop())
+    return (check(l))
+    
+def check(l):
+    n=0
+    for k in l:
+        n=n*10+int(k)
+    if(prime(n)):
+        return True
+    return False
+
+for i in range(3,1000000,2):  
+    flag=True
+    evenflag=False
+    even=[2,4,6,8,0]
+    l=list(str(i))
+    for k in even:
+        if(str(k) in l):
+            evenflag=True
+            break;
+    if(evenflag):
+        continue      
+    for k in range(len(l)):
+        if(not rotate(l)):
+            flag=False
+            break              
+    if(flag):
+        total+=1
+print total
+
+36、
+result = 0
+for i in range(1, 1000001):
+	if str(i) == str(i)[::-1]:
+		b = str(bin(i))[2:]
+		if b == b[::-1]:
+			#print i, b
+			result += i 
+print result
+
+37、
+from euler import is_prime
+from math import log10
+ 
+primes = [23,37,53,73,313,317,373,797,3137,3797,7937,31397,31973,37313,37397,71317,
+71713,71917,73973,79397,313717,317197,319313,371737,371797,373717,373937,
+379397,713737,713917,717317,717397,717917,719197,719713,719717,731713,
+731737,739373,739397,791317,791797,793717,797917]
+ 
+def trunc(n):
+  c = n
+  while c>10:
+    c = c % ( 10**(int(log10(c))) )
+    n = n//10
+    if not is_prime(c) or not is_prime(n): return False 
+  return True
+ 
+c = 0
+s = 0
+for p in primes:
+  if trunc(p): 
+    print p
+    c += 1
+    s += p
+ 
+print c,"primes found for a sum of",s
+
+38、
+def f1(n):
+    strNum = str(n)
+    for i in range(1,5):
+        tmpStr = strNum
+        num = int(strNum[:i])
+        index = 1
+        flag = False
+        while True:
+            str1 = str(num*index)
+            len1 = len(str1)
+            if str1 == tmpStr[:len1]:
+                if len(tmpStr)>len1:
+                    tmpStr=tmpStr[len1:]
+                elif len(tmpStr) == len1:
+                    flag = True
+                    break
+            else:
+                break
+            index += 1
+        if flag:
+            return True
+    return False
+
+numList=[1,['','12345678']]
+while True:
+    if numList[0]==40320:
+    #8!=362880
+        break
+    for i in range(1,numList[0]+1):
+        left = numList[i][0]
+        right= numList[i][1]
+        l = left+right[0]
+        r = right.replace(right[0],'')
+        numList[i] = [l,r]
+        for j in right[1:]:
+            l = left+j
+            r = right.replace(j,'')
+            numList.append([l,r])
+            numList[0] += 1
+numStrList = []
+for i in numList[1:]:
+    numStrList.append('9'+i[0]+i[1])
+del numList
+# print numStrList
+# print len(numStrList)
+result = 0
+for i in numStrList:
+    if f1(int(i)):
+        if int(i) > result:
+            result = int(i)
+print result
+
+39、
+t_max = 0
+p_limit = 1000
+ 
+for p in range(p_limit//2, p_limit+1, 2):
+  t = 0;
+  for a in range(2, p/4+1):
+    if  p*(p - 2*a) % (2*(p-a)) == 0: t += 1
+    if t > t_max: (t_max, p_max) = (t, p)
+ 
+print p_max
+
+40、
+num = 0
+strs = ''
+count = 0
+while count < 1000001:
+	l = len(str(num))
+	count += l
+	strs += str(num)
+	num += 1
+
+ss = 1
+for i in range(7):
+	ss *= int( strs[10**i] )
+print ss
+
+41、
+from euler import is_prime, is_pandigital
+'''
+any integer is divisible by 3 or 9 whose sum of digits is divisible by 3 or 9; therefore composite and not prime.
+
+9+8+7+6+5+4+3+2+1 = 45,
+8+7+6+5+4+3+2+1 = 36,
+6+5+4+3+2+1 = 21, and
+5+4+3+2+1 = 15,
+all of which are divisible by 3 and therefore could not yield a 1 to {5, 6, 8, 9} pandigital prime. So that leaves 4 and 7 digit prime numbers less than 4321 and 7654321 respectively. 
+
+'''
+
+n = 7654321
+while not(is_prime(n) and is_pandigital(str(n), 7)):
+	n -= 2
+print n
+
+42、
+import urllib
+
+words = urllib.urlopen('http://projecteuler.net/project/words.txt').read()
+wordslist = [ w[1:-1] for w in words.split(',') ]
+tri_numbers = []
+n = 1
+while n*(n+1) / 2 <= 260:
+	tri_numbers.append(n*(n+1)/2)
+	n += 1
+result = 0
+for word in wordslist:
+	v = 0
+	for w in word:
+		v += ord(w)-ord('A')+1
+	if v in tri_numbers:
+		result += 1
+
+print result 
+
+
+43、
+import itertools
+#here is a better and faster way: http://blog.dreamshire.com/2009/04/28/project-euler-problem-43-solution/
+iter_list = itertools.permutations(range(10))
+result_sum = 0
+divs = [2,3,5,7,11,13,17]
+for number in iter_list:
+	if number[0] == 0: continue
+	number_str = ''.join([str(n) for n in number])
+	isok = True
+	for i in range(len(divs)):
+		if int(number_str[i+1: i+4]) % divs[i] != 0:
+			isok = False
+			break
+	if isok:
+		result_sum += int(number_str)
+print result_sum 
+
+44、
+pent = set( n * (3*n - 1) / 2 for n in range(2,2400) ) 
+ 
+def pe44():
+  for pj in pent: 
+    for pk in pent: 
+      if pj - pk in pent and pj + pk in pent: 
+        return pj - pk
+ 
+print pe44()
+
+45、
+#encoding=utf8
+from math import sqrt
+'''
+Note that Hexagonal numbers are a subset of Triangle numbers so we only determine the first occurrence of Hi = Pj to find our answer. We can safely start our search from 144 as alluded from the problem’s description.
+'''
+def is_pentagonal(n):
+	   p = (sqrt(1 + 24*n) + 1) / 6
+	   return p==int(p)
+h = lambda n: n*(2*n - 1) #calculate the nth hexagonal number
+n = 144 
+while not(is_pentagonal(h(n))): n += 1 
+print h(n)
+
+46、
+n = 5
+f = 1
+primes = set()
+ 
+while (1):
+  if all( n % p for p in primes ):
+    primes.add(n)
+  else:
+    if not any( (n-2*i*i) in primes for i in range(1, n) ):
+      break
+  n += 3-f
+  f = -f
+print n
+
+47、
+from euler import factor
+# the euler module can find here : http://blog.dreamshire.com/2009/03/26/94/ 
+ci = 1
+nf = 4		#number of distinct factors
+ns = 4		#number of consecutive integers
+n = 2*3*5*7	#starting candidate for search
+while ci != ns:
+  n += 1
+  if len(factor(n)) == nf: ci += 1
+  else: ci = 0
+ 
+print "Answer to PE47 = ", n-nf+1
+
+48、
+result = 0
+for i in range(1, 1001):
+	result += i**i
+print str(result)[-10:]
+
+49、
+from euler import is_prime, is_perm
+ 
+n = 1489 	# must be odd
+while True:
+  b, c = n+3330, n+6660
+  if is_prime(n) and is_prime(b) and is_prime(c) \
+    and is_perm(n,b) and is_perm(b,c): break
+  n += 2
+ 
+print "Answer to PE49 = ", str(n)+str(b)+str(c)
+
+50、
+from euler import prime_sieve, is_prime
+
+max = 1000000
+primes = prime_sieve(max)
+prime_sum = [0]
+
+sum = 0
+count = 0
+while(sum < max):
+	sum += primes[count]
+	prime_sum.append(sum)
+	count += 1
+
+terms = 1
+for i in range(count):
+	for j in range(i+terms, count):
+		n = prime_sum[j] - prime_sum[i]
+		if j-i > terms and is_prime(n):
+			terms, max_prime = j-i, n
+print max_prime			
+
