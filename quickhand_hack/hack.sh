@@ -1,28 +1,31 @@
 #! /bin/bash
-baseurl='http://test.m41s.com:7979/apps/quickhand/'
-phpsessid='PHPSESSID=4a4054b8c980f05625807b6984e962f1'
+baseurl='http://app.moxian.com/apps/quickhand/system/'
+phpsessid='PHPSESSID=a687a6b3f4e600e2a8bba6917268ca87'
 
 jsonreturn=`curl -b "${phpsessid}" -d "rank=2" ${baseurl}creategame.php`  #创建游戏
-gid=`echo "import json
-print json.loads('${jsonreturn}')['gid']" | python`  #根据返回得到gid
-echo $gid
+jsonreturn=`echo $jsonreturn`
+echo "创建游戏返回："$jsonreturn
+gid=`echo ${jsonreturn}|grep -o "[0-9]\{4\}"`
+echo "游戏ID："$gid
 curl -b "${phpsessid}" -o getimage.jpg ${baseurl}getimage.php?gid=${gid}  #下载大图
 
 jsonreturn=`curl -b "${phpsessid}" -d "gid=${gid}" ${baseurl}start.php`  #创建游戏
-cardimg=`echo "import json
-print json.loads('${jsonreturn}')['card']" | python`  #目标选项的图片 
-echo $cardimg
-curl -b "${phpsessid}" -o dest.gif ${cardimg}  #下载目标图
+echo "开始游戏返回："$jsonreturn
+cardimg=`echo ${jsonreturn} | grep -o "[0-9]\{1,2\}\.gif" | grep -o "[0-9]\{1,2\}"`
+cardimg=${cardimg}".jpg"
+echo "目标图片："$cardimg
+#curl -b "${phpsessid}" -o dest.gif ${cardimg}  #下载目标图
+cp dest/${cardimg} dest.jpg
 
 #下面进行处理，识别目标所在的序号
 bigImagePath="getimage.jpg"
 destImagePath="dest.gif"
 
 python ./cropBigImage.py $bigImagePath
-python ./cropDestImage.py $destImagePath
+rm $bigImagePath
+#python ./cropDestImage.py $destImagePath
 result=''
-return=`findimagedupes *.jpg | grep dest.gif2.jpg|grep -o -E "/[0-9]+".jpg|grep -o -E [0-9]+`   #相似匹配
-#echo $return
+return=`findimagedupes *.jpg | grep dest.jpg|grep -o -E "/[0-9]+".jpg|grep -o -E [0-9]+`   #相似匹配
 for id in $return; do
 	#return_str=`findimagedupes ${id}.jpg dest.gif2.jpg`
 	#if [ "${return_str}" != "" ]; then
@@ -30,7 +33,7 @@ for id in $return; do
 	#fi
 done
 result=`echo ${result:0:-1}`
-echo $result
+echo "匹配结果："$result
 
 isok=` curl -b "${phpsessid}" -d "gid=${gid}&pos=${result}" ${baseurl}checkchoose.php`  #提交结果
-echo $isok
+echo -e "\033[1;31;40m提交结果返回：\033[0m"$isok
