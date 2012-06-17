@@ -1,11 +1,13 @@
 #! /bin/bash
 baseurl='http://app.moxian.com/apps/quickhand/system/'
-phpsessid='PHPSESSID=a687a6b3f4e600e2a8bba6917268ca87'
+curl -d "__userlable__=810492306@qq.com&__pwd__=6b7450d79ccf4d8ed189769a10d31204&type=login&keeplogin=off&u=&code=" -D cookies.txt http://moxian.com/login/gatway.php
+phpsessid=`grep  -o "PHPSESSID=.\{32\}" cookies.txt`
+#phpsessid='PHPSESSID=fb753d8e52cdf77104531c231f1bd8f7'
 
 jsonreturn=`curl -b "${phpsessid}" -d "rank=2" ${baseurl}creategame.php`  #创建游戏
 jsonreturn=`echo $jsonreturn`
 echo "创建游戏返回："$jsonreturn
-gid=`echo ${jsonreturn}|grep -o "[0-9]\{4\}"`
+gid=`echo ${jsonreturn}|grep -o "[0-9]\{5\}"`
 echo "游戏ID："$gid
 curl -b "${phpsessid}" -o getimage.jpg ${baseurl}getimage.php?gid=${gid}  #下载大图
 
@@ -32,7 +34,7 @@ for id in $return; do
 		result=${result}${id}","
 	#fi
 done
-result=`echo ${result:0:-1}`
+result=${result%,*}
 echo "匹配结果："$result
 
 isok=` curl -b "${phpsessid}" -d "gid=${gid}&pos=${result}" ${baseurl}checkchoose.php`  #提交结果
