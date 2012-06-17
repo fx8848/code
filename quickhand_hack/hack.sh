@@ -1,10 +1,14 @@
 #! /bin/bash
 baseurl='http://app.moxian.com/apps/quickhand/system/'
-curl -d "__userlable__=810492306@qq.com&__pwd__=6b7450d79ccf4d8ed189769a10d31204&type=login&keeplogin=off&u=&code=" -D cookies.txt http://moxian.com/login/gatway.php
 phpsessid=`grep  -o "PHPSESSID=.\{32\}" cookies.txt`
-#phpsessid='PHPSESSID=fb753d8e52cdf77104531c231f1bd8f7'
 
 jsonreturn=`curl -b "${phpsessid}" -d "rank=2" ${baseurl}creategame.php`  #创建游戏
+if echo $jsonreturn|grep "system" ;then  #没有登陆
+	curl -d "__userlable__=810492306@qq.com&__pwd__=6b7450d79ccf4d8ed189769a10d31204&type=login&keeplogin=off&u=&code=" -D cookies.txt http://moxian.com/login/gatway.php
+	phpsessid=`grep  -o "PHPSESSID=.\{32\}" cookies.txt`
+	jsonreturn=`curl -b "${phpsessid}" -d "rank=2" ${baseurl}creategame.php`  #创建游戏
+fi
+
 jsonreturn=`echo $jsonreturn`
 echo "创建游戏返回："$jsonreturn
 gid=`echo ${jsonreturn}|grep -o "[0-9]\{5\}"`
