@@ -16,7 +16,7 @@ DBbinPath=/usr/opt/local/mysql-5.1.47/bin/mysqldump
 # error record log file
 ErrorLog=${BackupPath}/error.txt
 
-if ${DBbinPath} -u${DBUser} -p${DBPass} --opt --default-character-set=utf8 --extended-insert=false --triggers -R --hex-blob --all-databases --flush-logs --delete-master-logs --delete-master-logs > ${BackupPath}"/"${DBHost}"-"`date "+%Y-%m-%d"`".sql" ;
+if ${DBbinPath} -u${DBUser} -p${DBPass} --opt --default-character-set=utf8 --extended-insert=false --triggers -R --hex-blob --all-databases --flush-logs --delete-master-logs --delete-master-logs | gzip > ${BackupPath}"/"${DBHost}"-"`date "+%Y-%m-%d"`".sql.gz" ;
 then
      find ${BackupPath}"/" -mtime +6 -exec rm {} \;
 else
